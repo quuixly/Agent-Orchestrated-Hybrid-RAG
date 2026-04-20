@@ -1,7 +1,7 @@
 from typing import List
 
-from .embedding_model import EmbeddingModel
-from .knowledge_database import KnowledgeDatabase
+from embedding_model import EmbeddingModel
+from knowledge_database import KnowledgeDatabase
 
 
 class HybridRAG:

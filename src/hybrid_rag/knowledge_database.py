@@ -3,7 +3,7 @@ from typing import List
 from pymilvus import MilvusClient, DataType, Function, FunctionType
 from pymilvus import AnnSearchRequest, RRFRanker
 
-from .embedding_model import EmbeddingModel
+from embedding_model import EmbeddingModel
 
 
 class KnowledgeDatabase:
