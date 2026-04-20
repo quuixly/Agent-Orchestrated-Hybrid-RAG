@@ -5,11 +5,13 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "fastapi>=0.136.0",
     "langgraph>=1.1.8",
     "mcp[cli]>=1.27.0",
     "pymilvus[model]>=2.6.12",
     "sentence-transformers>=5.4.1",
     "torch>=2.11.0",
+    "uvicorn[standard]>=0.44.0",
 ]
 
 [[tool.uv.index]]
