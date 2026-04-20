@@ -8,11 +8,11 @@ class HybridRAG:
     def __init__(self, knowledge_database: KnowledgeDatabase):
         self.__knowledge_database = knowledge_database
 
-    def process_documents(self, collection_name: str, documents: List[str]):
-        self.__knowledge_database.insert(collection_name, documents)
+    def process_documents(self, collection_name: str, documents: List[str]) -> bool:
+        return self.__knowledge_database.insert(collection_name, documents)
 
-    def drop_collection(self, collection_name: str):
-        self.__knowledge_database.drop_collection(collection_name)
+    def drop_collection(self, collection_name: str) -> bool:
+        return self.__knowledge_database.drop_collection(collection_name)
 
     def list_collections(self):
         return self.__knowledge_database.list_collections()
