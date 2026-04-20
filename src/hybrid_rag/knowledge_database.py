@@ -89,24 +89,30 @@ class KnowledgeDatabase:
         except Exception as e:
             return False
 
-    def insert(self, collection_name: str, texts: List[str]) -> None:
+    def insert(self, collection_name: str, texts: List[str]) -> bool:
         if not self.__client.has_collection(collection_name):
             self.create_collection(collection_name)
 
-        dense_vectors = self.__embedding_model.encode_documents(texts)
-        data = [
-            {
-                "text": text,
-                "dense": vector
-            }
-            for text, vector in zip(texts, dense_vectors)
-        ]
+        try:
+            dense_vectors = self.__embedding_model.encode_documents(texts)
+            data = [
+                {
+                    "text": text,
+                    "dense": vector
+                }
+                for text, vector in zip(texts, dense_vectors)
+            ]
 
-        self.__client.insert(
-            collection_name=collection_name,
-            data=data
-        )
-        self.__client.flush(collection_name)
+            self.__client.insert(
+                collection_name=collection_name,
+                data=data
+            )
+            self.__client.flush(collection_name)
+
+            return True
+        except Exception as e:
+            logging.error(f"Failed to insert documents into '{collection_name}'. Error: {e}")
+            return False
 
     def delete(self, collection_name: str, indices: List[int]) -> bool:
         try:
