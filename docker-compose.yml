@@ -61,6 +61,20 @@ services:
       - "etcd"
       - "minio"
 
+  mcp:
+    container_name: mcp-server
+    build:
+      context: ./src/mcp_server
+    ports:
+      - "8000:8000"
+    environment:
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=8000
+    networks:
+      - default
+    depends_on:
+      - "standalone"
+
 networks:
   default:
     name: milvus

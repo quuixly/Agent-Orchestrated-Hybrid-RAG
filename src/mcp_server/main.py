@@ -1,9 +1,14 @@
 from mcp.server.fastmcp import FastMCP
 from pydantic import Field
+import os
+
 from tools.hybrid_rag import list_collections, search
 
 
-mcp = FastMCP("Environment")
+MCP_HOST = os.getenv("MCP_HOST", "0.0.0.0")
+MCP_PORT = int(os.getenv("MCP_PORT", 8000))
+
+mcp = FastMCP("Environment", host=MCP_HOST, port=MCP_PORT)
 
 
 @mcp.tool(
@@ -47,4 +52,4 @@ def search_ground_truth_database(
     return search(collection_name, query, limit, rrf_reranker_k_param)
 
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run(transport="streamable-http")
