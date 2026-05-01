@@ -61,19 +61,35 @@ services:
       - "etcd"
       - "minio"
 
+  rag:
+    container_name: hybrid-rag
+    build:
+      context: src/rag
+    ports:
+      - "8001:8000"
+    environment:
+      - MILVUS_URL=http://standalone:19530
+      - RAG_HOST=0.0.0.0
+      - RAG_PORT=8000
+    networks:
+      - default
+    depends_on:
+      - "standalone"
+
   mcp:
     container_name: mcp-server
     build:
-      context: ./src/mcp_server
+      context: src/mcp_server
     ports:
       - "8000:8000"
     environment:
+      - RAG_URL=http://rag:8000
       - MCP_HOST=0.0.0.0
       - MCP_PORT=8000
     networks:
       - default
     depends_on:
-      - "standalone"
+      - "rag"
 
 networks:
   default:

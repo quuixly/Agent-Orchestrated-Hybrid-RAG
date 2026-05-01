@@ -1,18 +1,14 @@
 [project]
-name = "agent-orchestrated-hybrid-rag"
+name = "RAG"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "RAG"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi[standard]>=0.136.0",
-    "langgraph>=1.1.8",
-    "mcp[cli]>=1.27.0",
     "pymilvus[model]>=2.6.12",
-    "requests>=2.33.1",
     "sentence-transformers>=5.4.1",
     "torch>=2.11.0",
-    "uvicorn>=0.44.0",
+    "uvicorn>=0.44.0"
 ]
 
 [[tool.uv.index]]

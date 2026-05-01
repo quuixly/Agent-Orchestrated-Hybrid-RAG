@@ -1,9 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from typing import List
 from pydantic import BaseModel
+import os
+import uvicorn
 
-from hybrid_rag import setup_hybrid_rag
+from src.hybrid_rag import setup_hybrid_rag
 
+
+RAG_HOST = os.getenv("RAG_HOST", "0.0.0.0")
+RAG_PORT = int(os.getenv("RAG_PORT", 8000))
 
 app = FastAPI()
 hybrid_rag = setup_hybrid_rag()
@@ -73,3 +78,7 @@ def drop_collection(collection_name: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host=RAG_HOST, port=RAG_PORT)

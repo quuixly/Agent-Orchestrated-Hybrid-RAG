@@ -2,13 +2,17 @@ import logging
 from typing import List
 from pymilvus import MilvusClient, DataType, Function, FunctionType
 from pymilvus import AnnSearchRequest, RRFRanker
+import os
 
-from embedding_model import EmbeddingModel
+from .embedding_model import EmbeddingModel
+
+
+MILVUS_URL = os.getenv("MILVUS_URL", "http://127.0.0.1:19530")
 
 
 class KnowledgeDatabase:
     def __init__(self, embedding_model: EmbeddingModel) -> None:
-        self.__client = MilvusClient(uri="http://localhost:19530")
+        self.__client = MilvusClient(uri=MILVUS_URL)
         self.__embedding_model = embedding_model
 
     def create_collection(self, collection_name: str) -> bool:
