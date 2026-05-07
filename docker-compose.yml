@@ -71,6 +71,11 @@ services:
       - MILVUS_URL=http://standalone:19530
       - RAG_HOST=0.0.0.0
       - RAG_PORT=8000
+      - HF_HOME=/app/model_cache
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/huggingface_cache:/app/model_cache
+    env_file:
+      - .env
     networks:
       - default
     depends_on:
