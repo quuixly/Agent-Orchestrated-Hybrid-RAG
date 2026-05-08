@@ -45,6 +45,8 @@ class KnowledgeDatabase:
             max_length=65535,
             enable_analyzer=True,
         )
+        schema.add_field(field_name="doc_id", datatype=DataType.INT64)
+        schema.add_field(field_name="seq_num", datatype=DataType.INT64)
         schema.add_field(
             field_name="dense",
             datatype=DataType.FLOAT_VECTOR,
@@ -93,19 +95,21 @@ class KnowledgeDatabase:
         except Exception as e:
             return False
 
-    def insert(self, collection_name: str, texts: List[str]) -> bool:
+    def insert(self, collection_name: str, documents: List[dict]) -> bool:
         if not self.__client.has_collection(collection_name):
             self.create_collection(collection_name)
 
         try:
+            texts = [doc["text"] for doc in documents]
             dense_vectors = self.__embedding_model.encode_documents(texts)
-            data = [
-                {
-                    "text": text,
-                    "dense": vector
-                }
-                for text, vector in zip(texts, dense_vectors)
-            ]
+            data = []
+            for i, doc in enumerate(documents):
+                data.append({
+                    "text": doc["text"],
+                    "dense": dense_vectors[i],
+                    "doc_id": doc["doc_id"],
+                    "seq_num": doc["seq_num"]
+                })
 
             self.__client.insert(
                 collection_name=collection_name,
@@ -125,7 +129,7 @@ class KnowledgeDatabase:
         except Exception as e:
             return False
 
-    def search(self, collection_name: str, query: str, limit: int, rrf_reranker_k_param: int = 60) -> List[str]:
+    def search(self, collection_name: str, query: str, limit: int, rrf_reranker_k_param: int = 60) -> List[dict]:
         if not self.__client.has_collection(collection_name):
             return []
 
@@ -151,14 +155,34 @@ class KnowledgeDatabase:
                 reqs=[search_params_dense, search_params_sparse],
                 ranker=RRFRanker(k = rrf_reranker_k_param),
                 limit=limit,
-                output_fields=["text"]
+                output_fields=["text", "doc_id", "seq_num"]
             )
 
             if not result:
                 return []
 
-            return [hit['entity']['text'] for hit in result[0]]
+            return [
+                {
+                    "text": hit['entity']['text'],
+                    "doc_id": hit['entity']['doc_id'],
+                    "seq_num": hit['entity']['seq_num']
+                } for hit in result[0]
+            ]
 
         except Exception as e:
             logging.error(f"Hybrid search failed: {e}")
             return []
+
+    def read_neighbor_chunk(self, collection_name: str, doc_id: int, current_seq: int, direction: str = "next") -> dict:
+        target_seq = current_seq + 1 if direction == "next" else current_seq - 1
+
+        try:
+            res = self.__client.query(
+                collection_name=collection_name,
+                filter=f"doc_id == {doc_id} and seq_num == {target_seq}",
+                output_fields=["text", "doc_id", "seq_num"]
+            )
+            return res[0] if res else None
+        except Exception as e:
+            logging.error(f"Error fetching neighbor chunk: {e}")
+            return None
