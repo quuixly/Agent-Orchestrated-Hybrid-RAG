@@ -22,3 +22,19 @@ def search(collection_name: str, query: str, limit: int = 5, rrf_reranker_k_para
     resp.raise_for_status()
 
     return resp.json()
+
+
+def get_neighbor_chunk(collection_name: str, doc_id: int, current_seq: int, direction: str = "next"):
+    url = f"{RAG_URL}/collections/{collection_name}/documents/{doc_id}/chunks/{current_seq}/neighbor"
+
+    resp = requests.get(
+        url,
+        params={"direction": direction}
+    )
+
+    if resp.status_code == 404:
+        return None
+
+    resp.raise_for_status()
+
+    return resp.json()
