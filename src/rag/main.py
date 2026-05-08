@@ -61,6 +61,43 @@ def search(collection_name: str, query: str, limit: int = 5, rrf_reranker_k_para
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/collections/{collection_name}/documents/{doc_id}/chunks/{current_seq}/neighbor")
+def get_neighbor_chunk(
+    collection_name: str,
+    doc_id: int,
+    current_seq: int,
+    direction: str
+):
+    """
+    Retrieves the neighboring chunk (next or previous) for a given document and sequence number.
+    Used by the Agent to 'turn the page' in a specific medical document.
+    """
+    if direction not in ["next", "prev", "previous"]:
+         raise HTTPException(status_code=400, detail="Direction must be 'next' or 'prev'.")
+
+    try:
+        normalized_direction = "prev" if direction == "previous" else direction
+
+        result = hybrid_rag.read_neighbor_chunk(
+            collection_name=collection_name,
+            doc_id=doc_id,
+            current_seq=current_seq,
+            direction=normalized_direction
+        )
+
+        if not result:
+            raise HTTPException(status_code=404, detail="Neighbor chunk not found (end or beginning of document).")
+
+        return {
+            "chunk": result
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.delete("/collections/{collection_name}")
 def drop_collection(collection_name: str):
     """Deletes an entire collection."""
