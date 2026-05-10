@@ -1,0 +1,21 @@
+[project]
+name = "RAG"
+version = "0.1.0"
+description = "RAG"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.136.0",
+    "pymilvus[model]>=2.6.12",
+    "sentence-transformers>=5.4.1",
+    "torch>=2.11.0",
+    "uvicorn>=0.44.0",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchvision = { index = "pytorch-cpu" }

@@ -1,0 +1,29 @@
+[project]
+name = "agent-orchestrated-hybrid-rag"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.136.0",
+    "langchain>=1.2.17",
+    "langchain-text-splitters>=1.1.2",
+    "langchain-mcp-adapters>=0.2.2",
+    "langgraph>=1.1.8",
+    "mcp[cli]>=1.27.0",
+    "pymilvus[model]>=2.6.12",
+    "requests>=2.33.1",
+    "sentence-transformers>=5.4.1",
+    "torch>=2.11.0",
+    "uvicorn>=0.44.0",
+    "langchain-openai>=1.2.1",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchvision = { index = "pytorch-cpu" }
