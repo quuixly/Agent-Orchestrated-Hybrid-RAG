@@ -84,9 +84,9 @@ ZASADY KOMPRESJI:
 FORMAT XML:
 <kompresja>
 [ZWALIDOWANE FAKTY]:
-- Pierwszy wyciągnięty fakt (np. dawkowanie to 5mg) [doc_id=123, seq=4]
-- Drugi wyciągnięty fakt (np. lek powoduje senność) [doc_id=123, seq=5]
-- Trzeci wyciągnięty fakt z innego chunka [doc_id=987, seq=1]
+- Pierwszy wyciągnięty fakt (np. dawkowanie to 5mg) [doc_id=123, seq_num=4]
+- Drugi wyciągnięty fakt (np. lek powoduje senność) [doc_id=123, seq_num=5]
+- Trzeci wyciągnięty fakt z innego chunka [doc_id=987, seq_num=1]
 </kompresja>
 
 KONTEKST:
