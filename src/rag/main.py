@@ -10,7 +10,7 @@ from src.hybrid_rag import setup_hybrid_rag
 RAG_HOST = os.getenv("RAG_HOST", "0.0.0.0")
 RAG_PORT = int(os.getenv("RAG_PORT", 8000))
 
-app = FastAPI()
+app = FastAPI(title="Hybrid RAG API")
 hybrid_rag = setup_hybrid_rag()
 
 class DocumentPayload(BaseModel):

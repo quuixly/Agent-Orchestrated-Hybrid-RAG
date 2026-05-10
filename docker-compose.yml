@@ -74,8 +74,6 @@ services:
       - HF_HOME=/app/model_cache
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/huggingface_cache:/app/model_cache
-    env_file:
-      - .env
     networks:
       - default
     depends_on:
@@ -86,7 +84,7 @@ services:
     build:
       context: src/mcp_server
     ports:
-      - "8000:8000"
+      - "8002:8000"
     environment:
       - RAG_URL=http://rag:8000
       - MCP_HOST=0.0.0.0
@@ -95,6 +93,27 @@ services:
       - default
     depends_on:
       - "rag"
+      - "standalone"
+
+  agent:
+    container_name: medical-agent
+    build:
+      context: src/agent
+    ports:
+      - "8003:8000"
+    environment:
+      - MCP_SERVER_URL=http://mcp:8000
+      - AGENT_HOST=0.0.0.0
+      - AGENT_PORT=8000
+      - MAX_AGENT_STEPS=10
+      - MAX_AGENT_CONTEXT_LENGTH=1000
+    networks:
+      - default
+    depends_on:
+      - "mcp"
+      - "rag"
+    env_file:
+      - .env
 
 networks:
   default:

@@ -5,11 +5,18 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from transformers import AutoTokenizer
+import os
 
 from src.bielik_llm import BielikChatModel
 from src.agent import Agent
 from src.mcp_client import MCPClient
 
+
+AGENT_HOST = os.getenv("AGENT_HOST", "0.0.0.0")
+AGENT_PORT = int(os.getenv("AGENT_PORT", 8000))
+MCP_SERVER_URL = f"{os.getenv('MCP_SERVER_URL', 'http://localhost:8002')}/mcp"
+MAX_AGENT_STEPS = int(os.getenv("MAX_AGENT_STEPS", 10))
+MAX_AGENT_CONTEXT_LENGTH = int(os.getenv("MAX_AGENT_CONTEXT_LENGTH", 1000))
 
 bielik = None
 tokenizer = None
@@ -20,7 +27,7 @@ MODEL_NAME = "speakleash/Bielik-11B-v2"
 MCP_CONFIGS = {
     "medical_knowledge_base": {
         "transport": "http",
-        "url": "http://127.0.0.1:8002/mcp",
+        "url": MCP_SERVER_URL,
     }
 }
 
@@ -59,8 +66,8 @@ async def ask_question(request: QuestionRequest):
                         "llm": bielik,
                         "mcp_client": mcp_client,
                         "tokenizer": tokenizer,
-                        "max_context_len": 200,
-                        "max_steps": 10,
+                        "max_context_len": MAX_AGENT_CONTEXT_LENGTH,
+                        "max_steps": MAX_AGENT_STEPS,
                     }
                 }
 
@@ -100,4 +107,4 @@ async def health_check():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host=AGENT_HOST, port=AGENT_PORT)
